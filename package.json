@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/parthjd/tinyapp/issues"
   },
-  "homepage": "https://github.com/parthjd/tinyapp#readme"
+  "homepage": "https://github.com/parthjd/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
