@@ -37,16 +37,22 @@ app.post("/urls", (req, res) => {
   res.redirect("/urls/" + shortURL);
 });
 
-app.get("/", (req, res) => {
-  res.send("Hello");
-});
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+app.post("/urls/:shortURL/delete", (req, res) => {
+  let shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect("/urls");
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body> Hello <b> World </b> </body></html>\n");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hello");
+// });
+// app.get("/urls.json", (req, res) => {
+//   res.json(urlDatabase);
+// });
+
+// app.get("/hello", (req, res) => {
+//   res.send("<html><body> Hello <b> World </b> </body></html>\n");
+// });
 
 function generateRandomString() {
   let randomString = Math.random()
