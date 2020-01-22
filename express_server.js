@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const PORT = 8080;
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -13,9 +15,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
-});
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}`);
 });
 
 app.get("/urls/new", (req, res) => {
@@ -47,6 +46,10 @@ app.post("/urls/:shortURL", (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect("/urls");
 });
+app.post("/login", (req, res) => {
+  res.cookie("username", req.body.username);
+  res.redirect("/urls");
+});
 
 // app.get("/", (req, res) => {
 //   res.send("Hello");
@@ -65,3 +68,7 @@ function generateRandomString() {
     .substring(2, 8);
   return randomString;
 }
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
+});
