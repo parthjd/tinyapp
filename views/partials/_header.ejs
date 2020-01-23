@@ -1,3 +1,8 @@
+<style>
+  a {
+    margin: 0px 5px;
+  }
+</style>
 <header>
   <nav class="navbar navbar-expand-md navbar-dark bg-success">
     <a class="navbar-brand" href="/urls">TinyApp</a>
@@ -7,20 +12,21 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link" href="/urls">My URLs</a>
-        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        <a class="  btn btn-success" href="/urls">My URLs</a>
+        <a class=" btn btn-success" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if ( username ) { %>
+
+    <% if (username) { %>
     <form action="/logout" method="post">
-      <label for="username"><%= username %></label>
+      <label for="username"><%= username["email"] %></label>
       <button type="submit" name="logout">Logout</button>
     </form>
-    <% } else { %>
-    <form action="/login" method="post">
-      <input type="text" name="username" placeholder="Enter your username">
-      <button type="submit" name="login">Login</button>
-    </form>
+    <% } else  { %>
+    <div>
+      <a href="/register" class="btn btn-outline-dark">Register</a>
+      <a href="/login" class="btn btn-outline-dark">Login</a>
+    </div>
     <% } %>
   </nav>
 </header>
