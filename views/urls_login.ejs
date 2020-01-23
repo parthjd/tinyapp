@@ -1,19 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<style>
-  button {
-    background-color: rgb(43, 199, 186);
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: 24px;
-    ;
-  }
-
-  form,
-  h2 {
-    text-align: center;
-    padding: 10px;
-  }
-</style>
 
 <head>
   <meta charset="utf-8">
@@ -24,16 +10,35 @@
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
   <title>Login -Tiny App</title>
+  <style>
+    button {
+      background-color: rgb(43, 199, 186);
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      font-size: 24px;
+      ;
+    }
+
+    form,
+    h2 {
+      text-align: center;
+      padding: 10px;
+    }
+
+    h2 {
+      font-size: 80px;
+      color: rgb(48, 133, 31);
+    }
+  </style>
 </head>
 
 
 <body>
   <%- include('partials/_header'); %>
-  <h2>Login</h2>
+  <h2>👉Login👈</h2>
   <form action="/login" method="post">
     <input type="email" name="email" placeholder="Enter your e-mail">
     <input type="password" name="password" placeholder="Enter your password">
-    <button type="submit" class="btn btn-success">Login</button>
+    <button type="submit" class="btn btn-outline-success">Login</button>
   </form>
 </body>
 
