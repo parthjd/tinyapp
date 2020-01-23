@@ -1,18 +1,28 @@
 //  ******* Variable declaration and require ******
 
 const express = require("express");
+const bcrypt = require("bcrypt")
 const app = express();
 const PORT = 8080;
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 app.use(cookieParser());
 app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "userRandomID"
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "userRandomID"
+  }
+
 };
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // *** Global users object ***
 
@@ -28,15 +38,34 @@ const users = {
     password: "dishwasher-funk"
   }
 };
+// found in the req.params object
 
 //  *** urls homepage ***
 
 app.get("/urls", (req, res) => {
+  let obj1 = {};
+  const loginID = req.cookies.id
+  for (let i in urlDatabase) {
+    if (urlDatabase[i].userID === loginID) {
+      obj1[i] = urlDatabase[i]
+    }
+  }
   let templateVars = {
-    urls: urlDatabase,
+    urls: obj1,
     username: req.cookies["id"]
+    // username: users[req.cookies["id"]].email
   };
   res.render("urls_index", templateVars);
+});
+
+app.post("/urls", (req, res) => {
+  let longURL = req.body.longURL;
+  let shortURL = generateRandomString();
+  urlDatabase[shortURL] = {
+    longURL,
+    userID: req.cookies.id
+  };
+  res.redirect("/urls/" + shortURL);
 });
 
 //  *** urls  create a new url ***
@@ -51,18 +80,12 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     username: req.cookies["id"]
   };
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls", (req, res) => {
-  let longURL = req.body.longURL;
-  let shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL;
-  res.redirect("/urls/" + shortURL);
-});
 
 // *** delete  URL ***
 
@@ -89,11 +112,13 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
   let email = req.body.email;
-  let password = req.body.password;
+  const password = req.body.password;
+  console.log(password);
   for (let key in users) {
-    if (users[key].email === email && users[key].password === password) {
+    if (users[key].email === email && bcrypt.compareSync(password, users[key].password)) {
       res.cookie("id", key);
       res.redirect("/urls");
+      return
     }
   }
   res.status(400);
@@ -109,7 +134,8 @@ app.post("/logout", (req, res) => {
 
 app.get("/register", (req, res) => {
   let templateVars = {
-    username: users[req.cookies.id]
+    username: users[req.cookies.id],
+
   };
   res.render("urls_registration", templateVars);
 });
@@ -127,7 +153,7 @@ app.post("/register", (req, res) => {
     users[userID] = {
       id: userID,
       email: email,
-      password: password
+      password: bcrypt.hashSync(password, 10)
     };
     console.log(users);
     res.cookie("id", userID);
