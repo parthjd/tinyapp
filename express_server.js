@@ -1,22 +1,18 @@
 //  ******* Variable declaration and require ******
 const {
   emailLookUp
-} =
-require("./helper")
+} = require("./helper")
 
 const {
   urlsForUser
 } = require("./helper")
 
-
 const express = require("express");
 const bcrypt = require("bcrypt")
 const app = express();
 const PORT = 8080;
-//const cookieParser = require("cookie-parser");
 const session = require("cookie-session")
 const bodyParser = require("body-parser");
-//app.use(cookieParser());
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({
   extended: true
@@ -29,6 +25,8 @@ app.use(session({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
 
+//  *** Database object ***
+
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
@@ -38,7 +36,6 @@ const urlDatabase = {
     longURL: "https://www.google.ca",
     userID: "userRandomID"
   }
-
 };
 
 // *** Global users object ***
@@ -55,9 +52,8 @@ const users = {
     password: bcrypt.hashSync("123", 10)
   }
 };
-// found in the req.params object
 
-//  *** urls homepage ***
+//  *** urls homepage and redirection for shortURL***
 
 app.get("/urls", (req, res) => {
   if (!users[req.session.id]) {
@@ -73,12 +69,10 @@ app.get("/urls", (req, res) => {
   }
   let templateVars = {
     urls: obj1,
-    // username: req.session["id"]
     username: users[req.session["id"]].email
   };
   res.render("urls_index", templateVars);
 });
-
 
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL].longURL
@@ -118,7 +112,6 @@ app.get("/urls/:shortURL", (req, res) => {
     longURL: urlDatabase[req.params.shortURL].longURL,
     username: users[req.session.id].email
   }
-  // console.log(users[req.session.id].email)
   let individualURL = urlsForUser(req.session.id, urlDatabase)
   if (individualURL[req.params.shortURL]) {
     res.render("urls_show", templateVars);
@@ -127,8 +120,6 @@ app.get("/urls/:shortURL", (req, res) => {
     res.status(400).send("Please login to continue");
   }
 });
-
-
 
 // *** delete  URL ***
 
@@ -146,6 +137,7 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 // *** Login & Logout ***
+
 app.get("/login", (req, res) => {
   let templateVars = {
     username: users[req.session.id]
@@ -172,7 +164,7 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
-// *** Registration ***
+// *** Registration *** 
 
 app.get("/register", (req, res) => {
   let templateVars = {
@@ -182,6 +174,7 @@ app.get("/register", (req, res) => {
   res.render("urls_registration", templateVars);
 });
 //  check if  email exists .. give error if true
+
 app.post("/register", (req, res) => {
   let userID = generateRandomString();
   let email = req.body.email;
@@ -197,7 +190,6 @@ app.post("/register", (req, res) => {
       email: email,
       password: bcrypt.hashSync(password, 10)
     };
-    console.log(users);
     req.session.id = userID;
     res.redirect("/urls");
     // res.clearCookie("username", username)
@@ -212,27 +204,6 @@ function generateRandomString() {
     .substring(2, 8);
   return randomString;
 }
-
-// *** Function - Email lookup  ***
-
-// const emailLookUp = (email, users) => {
-//   for (let key in users) {
-//     if (users[key].email === email) {
-//       return true;
-//     }
-//   }
-//   return false;
-// };
-
-// const urlsForUser = (id, urlDatabase) => {
-//   let filterDatabase = {};
-//   for (let key in urlDatabase) {
-//     if (urlDatabase[key].userID === id) {
-//       filterDatabase[key] = urlDatabase[key]
-//     }
-//   }
-//   return filterDatabase;
-// }
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
