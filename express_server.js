@@ -190,9 +190,10 @@ app.post("/register", (req, res) => {
       email: email,
       password: bcrypt.hashSync(password, 10)
     };
+    console.log(users)
     req.session.id = userID;
     res.redirect("/urls");
-    // res.clearCookie("username", username)
+
   }
 });
 
